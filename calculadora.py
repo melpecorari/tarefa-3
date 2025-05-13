@@ -1,71 +1,73 @@
-import tkinter as tk
+import tkinter as tk 
 
-def obter_valores():
-    try:
-        n1 = float(entrada1.get())
-        n2 = float(entrada2.get())
-        return n1, n2
-    except ValueError:
-        resultado_label.config(text="Erro: valores inválidos.")
-        return None, None
+janela = tk.Tk() 
 
-def somar():
-    n1, n2 = obter_valores()
-    if n1 is not None:
-        resultado = n1 + n2
-        resultado_label.config(text=f"Resultado: {resultado}")
+janela.title("Calculadora") 
 
-def subtrair():
-    n1, n2 = obter_valores()
-    if n1 is not None:
-        resultado = n1 - n2
-        resultado_label.config(text=f"Resultado: {resultado}")
+janela.geometry("430x570")  
 
-def multiplicar():
-    n1, n2 = obter_valores()
-    if n1 is not None:
-        resultado = n1 * n2
-        resultado_label.config(text=f"Resultado: {resultado}")
+janela.config(bg="LIGHTYELLOW")   
 
-def dividir():
-    n1, n2 = obter_valores()
-    if n1 is not None:
-        if n2 == 0:
-            resultado_label.config(text="Erro: divisão por zero.")
-        else:
-            resultado = n1 / n2
-            resultado_label.config(text=f"Resultado: {resultado}")
+janela.option_add("*Font", ("TIMES NEW ROMAN", 20))  
 
-def zerar():
-    entrada1.delete(0, tk.END)
-    entrada2.delete(0, tk.END)
-    resultado_label.config(text="Resultado: ")
+ 
+tela = tk.Entry(janela, font=("TIMES NEW ROMAN ", 24), bd=4, relief="sunken", justify="right") 
+
+tela.grid(row=0, column=0, columnspan=4, padx=10, pady=10) 
 
 
-janela = tk.Tk()
-janela.title("calculadora")
-janela.geometry("400x400")
-janela.config(bg="lightblue")
+def press(tecla): 
 
-tk.Label(janela, text="Adicione o valor 1:", bg="white", font=("Arial", 12)).pack(pady=5)
-entrada1 = tk.Entry(janela, font=("Arial", 14))
-entrada1.pack()
+    texto = tela.get() 
 
-tk.Label(janela, text="Adicione o valor 2:", bg="white", font=("Arial", 12)).pack(pady=5)
-entrada2 = tk.Entry(janela, font=("Arial", 14))
-entrada2.pack()
+    if tecla == '=': 
 
-frame_botoes = tk.Frame(janela, bg="lightblue")
-frame_botoes.pack(pady=20)
+        texto = texto.replace('^', '**') 
 
-tk.Button(frame_botoes, text="+", command=somar, width=5,  font=("Arial", 12)).grid(row=0, column=0, padx=5)
-tk.Button(frame_botoes, text="-", command=subtrair, width=5, font=("Arial", 12)).grid(row=0, column=1, padx=5)
-tk.Button(frame_botoes, text="*", command=multiplicar, width=5,  font=("Arial", 12)).grid(row=0, column=2, padx=5)
-tk.Button(frame_botoes, text="/", command=dividir, width=5, font=("Arial", 12)).grid(row=0, column=3, padx=5)
-tk.Button(frame_botoes, text="Zerar/Apagar", command=zerar, width=15, font=("Arial", 12)).grid(row=1, column=0, columnspan=4, pady=15)
+        caracteres_validos = "0123456789+-*/().c " 
 
-resultado_label = tk.Label(janela, text="Resultado: ", font=("Arial", 16), bg="white")
-resultado_label.pack(pady=10)
+        if texto.strip() != "" and all(c in caracteres_validos for c in texto): 
 
+            resultado = str(eval(texto)) 
 
-janela.mainloop()
+        else: 
+
+            resultado = "ERROR" 
+
+        tela.delete(0, tk.END) 
+
+        tela.insert(0, resultado) 
+
+    elif tecla == 'C': 
+
+        tela.delete(0, tk.END) 
+
+    else: 
+
+        tela.insert(tk.END, tecla) 
+
+estilo_botao = {"width": 5,"height": 2, "fg": "#0b5394","bg": "WHITE", "font": ("Courier New", 20),"relief": "raised","bd": 6} 
+
+botoes = [ 
+
+    ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3), 
+
+    ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3), 
+
+    ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3), 
+
+    ('0', 4, 0), ('.', 4, 1), ('C', 4, 2), ('+', 4, 3), 
+
+    ('(', 5, 0), (')', 5, 1), ('^', 5, 2), ('=', 5, 3) 
+
+] 
+
+for (texto, linha, coluna) in botoes: 
+
+    botao = tk.Button(janela, text=texto, **estilo_botao, command=lambda tecla=texto: press(tecla)) 
+
+    botao.grid(row=linha, column=coluna, padx=7, pady=7) #lambda tecla=texto: press(tecla) - Corrige o valor do botão no loop, sem erro. 
+
+ 
+
+janela.mainloop() 
